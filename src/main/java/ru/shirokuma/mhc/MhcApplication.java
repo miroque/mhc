@@ -11,6 +11,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.dialog.Dialogs;
+import ru.shirokuma.mhc.model.Pressure;
+import ru.shirokuma.mhc.view.RootLayoutController;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -23,7 +25,7 @@ public class MhcApplication extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    private ObservableList<Person> personData = FXCollections.observableArrayList();
+    private ObservableList<Pressure> personData = FXCollections.observableArrayList();
 
     public static void main(String[] args) {
         launch(args);
