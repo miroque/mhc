@@ -35,4 +35,52 @@ public class Pressure {
         // Some initial dummy data, just for convenient testing.
         this.timePoint = new SimpleObjectProperty<LocalDateTime>(LocalDateTime.now());
     }
+
+    public int getSbp() {
+        return sbp.get();
+    }
+
+    public IntegerProperty sbpProperty() {
+        return sbp;
+    }
+
+    public void setSbp(int sbp) {
+        this.sbp.set(sbp);
+    }
+
+    public int getDbp() {
+        return dbp.get();
+    }
+
+    public IntegerProperty dbpProperty() {
+        return dbp;
+    }
+
+    public void setDbp(int dbp) {
+        this.dbp.set(dbp);
+    }
+
+    public int getPulse() {
+        return pulse.get();
+    }
+
+    public IntegerProperty pulseProperty() {
+        return pulse;
+    }
+
+    public void setPulse(int pulse) {
+        this.pulse.set(pulse);
+    }
+
+    public LocalDateTime getTimePoint() {
+        return timePoint.get();
+    }
+
+    public ObjectProperty<LocalDateTime> timePointProperty() {
+        return timePoint;
+    }
+
+    public void setTimePoint(LocalDateTime timePoint) {
+        this.timePoint.set(timePoint);
+    }
 }
