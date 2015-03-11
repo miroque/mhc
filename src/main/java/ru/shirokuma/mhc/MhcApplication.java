@@ -1,11 +1,5 @@
-package main.java.ru.shirokuma.mhc;
+package ru.shirokuma.mhc;
 
-import ch.makery.adress.model.Person;
-import ch.makery.adress.model.PersonListWrapper;
-import ch.makery.adress.view.BirthdayStatisticsController;
-import ch.makery.adress.view.PersonEditDialogController;
-import ch.makery.adress.view.PersonOverviewController;
-import ch.makery.adress.view.RootLayoutController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -53,7 +47,7 @@ public class MhcApplication extends Application {
         try {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class
+            loader.setLocation(MhcApplication.class
                     .getResource("view/RootLayout.fxml"));
             rootLayout = (BorderPane) loader.load();
 
@@ -84,7 +78,7 @@ public class MhcApplication extends Application {
         try {
             // Load person overview.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/PersonOverview.fxml"));
+            loader.setLocation(MhcApplication.class.getResource("view/PersonOverview.fxml"));
             AnchorPane personOverview = (AnchorPane) loader.load();
 
             // Set person overview into the center of root layout.
@@ -135,7 +129,7 @@ public class MhcApplication extends Application {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/PersonEditDialog.fxml"));
+            loader.setLocation(MhcApplication.class.getResource("view/PersonEditDialog.fxml"));
             AnchorPane page = (AnchorPane) loader.load();
 
             // Create the dialog Stage.
@@ -168,7 +162,7 @@ public class MhcApplication extends Application {
      * @return
      */
     public File getPersonFilePath() {
-        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        Preferences prefs = Preferences.userNodeForPackage(MhcApplication.class);
         String filePath = prefs.get("filePath", null);
         if (filePath != null) {
             return new File(filePath);
@@ -184,7 +178,7 @@ public class MhcApplication extends Application {
      * @param file the file or null to remove the path
      */
     public void setPersonFilePath(File file) {
-        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        Preferences prefs = Preferences.userNodeForPackage(MhcApplication.class);
         if (file != null) {
             prefs.put("filePath", file.getPath());
 
@@ -260,7 +254,7 @@ public class MhcApplication extends Application {
         try {
             // Load the fxml file and create a new stage for the popup.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/BirthdayStatistics.fxml"));
+            loader.setLocation(MhcApplication.class.getResource("view/BirthdayStatistics.fxml"));
             AnchorPane page = (AnchorPane) loader.load();
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Birthday Statistics");

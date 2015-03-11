@@ -1,4 +1,4 @@
-package main.java.ru.shirokuma.mhc.model;
+package ru.shirokuma.mhc.model;
 
 import javafx.beans.property.*;
 
