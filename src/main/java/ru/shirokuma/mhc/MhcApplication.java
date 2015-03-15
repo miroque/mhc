@@ -5,18 +5,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.controlsfx.dialog.Dialogs;
 import ru.shirokuma.mhc.model.Pressure;
+import ru.shirokuma.mhc.view.PressureLayoutController;
 import ru.shirokuma.mhc.view.RootLayoutController;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.IOException;
 import java.util.prefs.Preferences;
@@ -25,7 +20,7 @@ public class MhcApplication extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    private ObservableList<Pressure> personData = FXCollections.observableArrayList();
+    private ObservableList<Pressure> pressureData = FXCollections.observableArrayList();
 
     public static void main(String[] args) {
         launch(args);
@@ -39,7 +34,7 @@ public class MhcApplication extends Application {
 //        this.primaryStage.getIcons().add(new Image("file:res/img/ico.png"));
         initRootLayout();
 
-        showPersonOverview();
+        showPressure();
     }
 
     /**
@@ -49,9 +44,8 @@ public class MhcApplication extends Application {
         try {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MhcApplication.class
-                    .getResource("view/RootLayout.fxml"));
-            rootLayout = (BorderPane) loader.load();
+            loader.setLocation(MhcApplication.class.getResource("view/RootLayout.fxml"));
+            rootLayout = loader.load();
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
@@ -67,26 +61,26 @@ public class MhcApplication extends Application {
         }
 
         // Try to load last opened person file.
-        File file = getPersonFilePath();
+        /*File file = getPersonFilePath();
         if (file != null) {
             loadPersonDataFromFile(file);
-        }
+        }*/
     }
 
     /**
      * Shows the person overview inside the root layout.
      */
-    public void showPersonOverview() {
+    public void showPressure() {
         try {
             // Load person overview.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MhcApplication.class.getResource("view/PersonOverview.fxml"));
-            AnchorPane personOverview = (AnchorPane) loader.load();
+            loader.setLocation(MhcApplication.class.getResource("view/PressureLayout.fxml"));
+            AnchorPane pressureOverview = (AnchorPane) loader.load();
 
             // Set person overview into the center of root layout.
-            rootLayout.setCenter(personOverview);
+            rootLayout.setCenter(pressureOverview);
             // Give the controller access to the main app.
-            PersonOverviewController controller = loader.getController();
+            PressureLayoutController controller = loader.getController();
             controller.setMainApp(this);
         } catch (IOException e) {
             e.printStackTrace();
@@ -102,60 +96,22 @@ public class MhcApplication extends Application {
     }
     public MhcApplication() {
         // Add some sample data
-        personData.add(new Person("Hans", "Muster"));
-        personData.add(new Person("Ruth", "Mueller"));
-        personData.add(new Person("Heinz", "Kurz"));
-        personData.add(new Person("Cornelia", "Meier"));
-        personData.add(new Person("Werner", "Meyer"));
-        personData.add(new Person("Lydia", "Kunz"));
-        personData.add(new Person("Anna", "Best"));
-        personData.add(new Person("Stefan", "Meier"));
-        personData.add(new Person("Martin", "Mueller"));
+        pressureData.add(new Pressure(110, 65, 72));
+        pressureData.add(new Pressure(115, 70, 70));
+        pressureData.add(new Pressure(110, 62, 70));
+        pressureData.add(new Pressure(120, 70, 75));
+        pressureData.add(new Pressure(105, 62, 68));
+        pressureData.add(new Pressure(90, 75, 60));
+        pressureData.add(new Pressure(110, 65, 72));
     }
     /**
      * Returns the data as an observable list of Persons.
      * @return
      */
-    public ObservableList<Person> getPersonData() {
-        return personData;
+    public ObservableList<Pressure> getPressureData() {
+        return pressureData;
     }
-    /**
-     * Opens a dialog to edit details for the specified person. If the user
-     * clicks OK, the changes are saved into the provided person object and true
-     * is returned.
-     *
-     * @param person the person object to be edited
-     * @return true if the user clicked OK, false otherwise.
-     */
-    public boolean showPersonEditDialog(Person person) {
-        try {
-            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MhcApplication.class.getResource("view/PersonEditDialog.fxml"));
-            AnchorPane page = (AnchorPane) loader.load();
 
-            // Create the dialog Stage.
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Person");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(page);
-            dialogStage.setScene(scene);
-
-            // Set the person into the controller.
-            PersonEditDialogController controller = loader.getController();
-            controller.setDialogStage(dialogStage);
-            controller.setPerson(person);
-
-            // Show the dialog and wait until the user closes it
-            dialogStage.showAndWait();
-
-            return controller.isOkClicked();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
     /**
      * Returns the person file preference, i.e. the file that was last opened.
      * The preference is read from the OS specific registry. If no such
@@ -199,7 +155,7 @@ public class MhcApplication extends Application {
      *
      * @param file
      */
-    public void loadPersonDataFromFile(File file) {
+ /*   public void loadPersonDataFromFile(File file) {
         try {
             JAXBContext context = JAXBContext
                     .newInstance(PersonListWrapper.class);
@@ -208,8 +164,8 @@ public class MhcApplication extends Application {
             // Reading XML from the file and unmarshalling.
             PersonListWrapper wrapper = (PersonListWrapper) um.unmarshal(file);
 
-            personData.clear();
-            personData.addAll(wrapper.getPersons());
+            pressureData.clear();
+            pressureData.addAll(wrapper.getPersons());
 
             // Save the file path to the registry.
             setPersonFilePath(file);
@@ -220,14 +176,14 @@ public class MhcApplication extends Application {
                     .masthead("Could not load data from file:\n" + file.getPath())
                     .showException(e);
         }
-    }
+    }*/
 
     /**
      * Saves the current person data to the specified file.
      *
      * @param file
      */
-    public void savePersonDataToFile(File file) {
+   /* public void savePersonDataToFile(File file) {
         try {
             JAXBContext context = JAXBContext
                     .newInstance(PersonListWrapper.class);
@@ -236,7 +192,7 @@ public class MhcApplication extends Application {
 
             // Wrapping our person data.
             PersonListWrapper wrapper = new PersonListWrapper();
-            wrapper.setPersons(personData);
+            wrapper.setPersons(pressureData);
 
             // Marshalling and saving XML to the file.
             m.marshal(wrapper, file);
@@ -248,11 +204,11 @@ public class MhcApplication extends Application {
                     .masthead("Could not save data to file:\n" + file.getPath())
                     .showException(e);
         }
-    }
+    }*/
     /**
      * Opens a dialog to show birthday statistics.
      */
-    public void showBirthdayStatistics() {
+   /* public void showBirthdayStatistics() {
         try {
             // Load the fxml file and create a new stage for the popup.
             FXMLLoader loader = new FXMLLoader();
@@ -267,12 +223,12 @@ public class MhcApplication extends Application {
 
             // Set the persons into the controller.
             BirthdayStatisticsController controller = loader.getController();
-            controller.setPersonData(personData);
+            controller.setPersonData(pressureData);
 
             dialogStage.show();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

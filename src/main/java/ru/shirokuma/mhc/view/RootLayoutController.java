@@ -5,9 +5,10 @@ package ru.shirokuma.mhc.view;
  */
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
+import javafx.scene.control.Dialog;
 import ru.shirokuma.mhc.MhcApplication;
-import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
 
@@ -30,14 +31,14 @@ public class RootLayoutController {
      */
     @FXML
     private void handleNew() {
-        mainApp.getPersonData().clear();
-        mainApp.setPersonFilePath(null);
+        /*mainApp.getPersonData().clear();
+        mainApp.setPersonFilePath(null);*/
     }
 
     /**
      * Opens a FileChooser to let the user select an address book to load.
      */
-    @FXML
+   /* @FXML
     private void handleOpen() {
         FileChooser fileChooser = new FileChooser();
 
@@ -52,13 +53,13 @@ public class RootLayoutController {
         if (file != null) {
             mainApp.loadPersonDataFromFile(file);
         }
-    }
+    }*/
 
     /**
      * Saves the file to the person file that is currently open. If there is no
      * open file, the "save as" dialog is shown.
      */
-    @FXML
+ /*   @FXML
     private void handleSave() {
         File personFile = mainApp.getPersonFilePath();
         if (personFile != null) {
@@ -66,12 +67,12 @@ public class RootLayoutController {
         } else {
             handleSaveAs();
         }
-    }
+    }*/
 
     /**
      * Opens a FileChooser to let the user select a file to save to.
      */
-    @FXML
+   /* @FXML
     private void handleSaveAs() {
         FileChooser fileChooser = new FileChooser();
 
@@ -90,18 +91,18 @@ public class RootLayoutController {
             }
             mainApp.savePersonDataToFile(file);
         }
-    }
+    }*/
 
     /**
      * Opens an about dialog.
      */
     @FXML
     private void handleAbout() {
-        Dialogs.create()
-                .title("My Health Card")
-                .masthead("О проекте")
-                .message("Автор: Панов Александр\nWebsite: http://not.yet.ru")
-                .showInformation();
+        Alert dialog = new Alert(Alert.AlertType.INFORMATION);
+        dialog.setTitle("My Health Card");
+        dialog.setHeaderText("О проекте");
+        dialog.setContentText("Автор: Панов Александр\nWebsite: http://not.yet.ru");
+        dialog.showAndWait();
     }
 
     /**
@@ -116,6 +117,6 @@ public class RootLayoutController {
      */
     @FXML
     private void handleShowBirthdayStatistics() {
-        mainApp.showBirthdayStatistics();
+//        mainApp.showBirthdayStatistics();
     }
 }
