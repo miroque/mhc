@@ -7,7 +7,6 @@ package ru.shirokuma.mhc.view;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
-import javafx.scene.control.Dialog;
 import ru.shirokuma.mhc.MhcApplication;
 
 import java.io.File;
@@ -31,14 +30,14 @@ public class RootLayoutController {
      */
     @FXML
     private void handleNew() {
-        /*mainApp.getPersonData().clear();
-        mainApp.setPersonFilePath(null);*/
+        mainApp.getPressureData().clear();
+        mainApp.setPressureFilePath(null);
     }
 
     /**
      * Opens a FileChooser to let the user select an address book to load.
      */
-   /* @FXML
+    @FXML
     private void handleOpen() {
         FileChooser fileChooser = new FileChooser();
 
@@ -51,9 +50,9 @@ public class RootLayoutController {
         File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
 
         if (file != null) {
-            mainApp.loadPersonDataFromFile(file);
+            mainApp.loadPressureDataFromFile(file);
         }
-    }*/
+    }
 
     /**
      * Saves the file to the person file that is currently open. If there is no
@@ -61,9 +60,9 @@ public class RootLayoutController {
      */
     @FXML
     private void handleSave() {
-        File personFile = mainApp.getPersonFilePath();
+        File personFile = mainApp.getPressureFilePath();
         if (personFile != null) {
-            mainApp.savePersonDataToFile(personFile);
+            mainApp.savePressureDataToFile(personFile);
         } else {
             handleSaveAs();
         }
@@ -89,7 +88,7 @@ public class RootLayoutController {
             if (!file.getPath().endsWith(".xml")) {
                 file = new File(file.getPath() + ".xml");
             }
-            mainApp.savePersonDataToFile(file);
+            mainApp.savePressureDataToFile(file);
         }
     }
 

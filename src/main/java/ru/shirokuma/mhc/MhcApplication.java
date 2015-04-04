@@ -20,6 +20,7 @@ import ru.shirokuma.mhc.view.RootLayoutController;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -71,10 +72,10 @@ public class MhcApplication extends Application {
         }
 
         // Try to load last opened person file.
-        /*File file = getPersonFilePath();
+        File file = getPressureFilePath();
         if (file != null) {
-            loadPersonDataFromFile(file);
-        }*/
+            loadPressureDataFromFile(file);
+        }
     }
 
     /**
@@ -129,7 +130,7 @@ public class MhcApplication extends Application {
      *
      * @return
      */
-    public File getPersonFilePath() {
+    public File getPressureFilePath() {
         Preferences prefs = Preferences.userNodeForPackage(MhcApplication.class);
         String filePath = prefs.get("filePath", null);
         if (filePath != null) {
@@ -145,7 +146,7 @@ public class MhcApplication extends Application {
      *
      * @param file the file or null to remove the path
      */
-    public void setPersonFilePath(File file) {
+    public void setPressureFilePath(File file) {
         Preferences prefs = Preferences.userNodeForPackage(MhcApplication.class);
         if (file != null) {
             prefs.put("filePath", file.getPath());
@@ -165,35 +166,59 @@ public class MhcApplication extends Application {
      *
      * @param file
      */
- /*   public void loadPersonDataFromFile(File file) {
+    public void loadPressureDataFromFile(File file) {
         try {
             JAXBContext context = JAXBContext
-                    .newInstance(PersonListWrapper.class);
+                    .newInstance(PressureListWrapper.class);
             Unmarshaller um = context.createUnmarshaller();
 
             // Reading XML from the file and unmarshalling.
-            PersonListWrapper wrapper = (PersonListWrapper) um.unmarshal(file);
+            PressureListWrapper wrapper = (PressureListWrapper) um.unmarshal(file);
 
             pressureData.clear();
-            pressureData.addAll(wrapper.getPersons());
+            pressureData.addAll(wrapper.getPressureList());
 
             // Save the file path to the registry.
-            setPersonFilePath(file);
+            setPressureFilePath(file);
 
         } catch (Exception e) { // catches ANY exception
-            Dialogs.create()
-                    .title("Error")
-                    .masthead("Could not load data from file:\n" + file.getPath())
-                    .showException(e);
+            Alert dialog = new Alert(Alert.AlertType.ERROR);
+            dialog.setTitle("Error");
+            dialog.setHeaderText("Could not load data to file:\n" + file.getPath());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String exceptionText = sw.toString();
+
+            Label label = new Label("The exception stacktrace was:");
+
+            TextArea textArea = new TextArea(exceptionText);
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(label, 0, 0);
+            expContent.add(textArea, 0, 1);
+
+            // Set expandable Exception into the dialog pane.
+            dialog.getDialogPane().setExpandableContent(expContent);
+
+            dialog.showAndWait();
         }
-    }*/
+    }
 
     /**
      * Saves the current person data to the specified file.
      *
      * @param file
      */
-    public void savePersonDataToFile(File file) {
+    public void savePressureDataToFile(File file) {
         try {
             JAXBContext context = JAXBContext
                     .newInstance(PressureListWrapper.class);
@@ -208,7 +233,7 @@ public class MhcApplication extends Application {
             m.marshal(wrapper, file);
 
             // Save the file path to the registry.
-            setPersonFilePath(file);
+            setPressureFilePath(file);
         } catch (Exception e) { // catches ANY exception
             Alert dialog = new Alert(Alert.AlertType.ERROR);
             dialog.setTitle("Error");
