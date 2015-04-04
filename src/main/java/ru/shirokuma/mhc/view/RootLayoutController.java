@@ -59,7 +59,7 @@ public class RootLayoutController {
      * Saves the file to the person file that is currently open. If there is no
      * open file, the "save as" dialog is shown.
      */
- /*   @FXML
+    @FXML
     private void handleSave() {
         File personFile = mainApp.getPersonFilePath();
         if (personFile != null) {
@@ -67,12 +67,12 @@ public class RootLayoutController {
         } else {
             handleSaveAs();
         }
-    }*/
+    }
 
     /**
      * Opens a FileChooser to let the user select a file to save to.
      */
-   /* @FXML
+    @FXML
     private void handleSaveAs() {
         FileChooser fileChooser = new FileChooser();
 
@@ -91,7 +91,7 @@ public class RootLayoutController {
             }
             mainApp.savePersonDataToFile(file);
         }
-    }*/
+    }
 
     /**
      * Opens an about dialog.

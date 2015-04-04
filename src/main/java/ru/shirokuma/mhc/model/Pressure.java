@@ -1,7 +1,9 @@
 package ru.shirokuma.mhc.model;
 
 import javafx.beans.property.*;
+import ru.shirokuma.mhc.util.LocalDateTimeAdapter;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDateTime;
 
 /**
@@ -72,6 +74,7 @@ public class Pressure {
         this.pulse.set(pulse);
     }
 
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
     public LocalDateTime getTimePoint() {
         return timePoint.get();
     }

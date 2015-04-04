@@ -5,15 +5,25 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import ru.shirokuma.mhc.model.Pressure;
+import ru.shirokuma.mhc.model.PressureListWrapper;
 import ru.shirokuma.mhc.view.PressureLayoutController;
 import ru.shirokuma.mhc.view.RootLayoutController;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.prefs.Preferences;
 
 public class MhcApplication extends Application {
@@ -72,12 +82,12 @@ public class MhcApplication extends Application {
      */
     public void showPressure() {
         try {
-            // Load person overview.
+            // Load pressure overview.
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MhcApplication.class.getResource("view/PressureLayout.fxml"));
             AnchorPane pressureOverview = (AnchorPane) loader.load();
 
-            // Set person overview into the center of root layout.
+            // Set pressure overview into the center of root layout.
             rootLayout.setCenter(pressureOverview);
             // Give the controller access to the main app.
             PressureLayoutController controller = loader.getController();
@@ -183,16 +193,16 @@ public class MhcApplication extends Application {
      *
      * @param file
      */
-   /* public void savePersonDataToFile(File file) {
+    public void savePersonDataToFile(File file) {
         try {
             JAXBContext context = JAXBContext
-                    .newInstance(PersonListWrapper.class);
+                    .newInstance(PressureListWrapper.class);
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
             // Wrapping our person data.
-            PersonListWrapper wrapper = new PersonListWrapper();
-            wrapper.setPersons(pressureData);
+            PressureListWrapper wrapper = new PressureListWrapper();
+            wrapper.setPressureList(pressureData);
 
             // Marshalling and saving XML to the file.
             m.marshal(wrapper, file);
@@ -200,11 +210,36 @@ public class MhcApplication extends Application {
             // Save the file path to the registry.
             setPersonFilePath(file);
         } catch (Exception e) { // catches ANY exception
-            Dialogs.create().title("Error")
-                    .masthead("Could not save data to file:\n" + file.getPath())
-                    .showException(e);
+            Alert dialog = new Alert(Alert.AlertType.ERROR);
+            dialog.setTitle("Error");
+            dialog.setHeaderText("Could not save data to file:\n" + file.getPath());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String exceptionText = sw.toString();
+
+            Label label = new Label("The exception stacktrace was:");
+
+            TextArea textArea = new TextArea(exceptionText);
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(label, 0, 0);
+            expContent.add(textArea, 0, 1);
+
+            // Set expandable Exception into the dialog pane.
+            dialog.getDialogPane().setExpandableContent(expContent);
+
+            dialog.showAndWait();
         }
-    }*/
+    }
     /**
      * Opens a dialog to show birthday statistics.
      */
