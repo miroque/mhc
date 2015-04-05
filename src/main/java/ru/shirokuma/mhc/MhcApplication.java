@@ -12,9 +12,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.shirokuma.mhc.model.Pressure;
 import ru.shirokuma.mhc.model.PressureListWrapper;
+import ru.shirokuma.mhc.view.PressureEditDialogController;
 import ru.shirokuma.mhc.view.PressureLayoutController;
 import ru.shirokuma.mhc.view.RootLayoutController;
 
