@@ -89,22 +89,6 @@ public class PressureEditDialogController {
         dialogStage.close();
     }
 
-    private void showPressureDetails(Pressure pressure) {
-        if (pressure != null) {
-            // Fill the labels with info from the person object.
-            upperField.setText(Integer.toString(pressure.getSbp()));
-            bottomField.setText(Integer.toString(pressure.getDbp()));
-            pulseField.setText(Integer.toString(pressure.getPulse()));
-            dateTimeField.setText(DateTimeUtil.format(pressure.getTimePoint()));
-        } else {
-            // Person is null, remove all the text.
-            upperField.setText("");
-            bottomField.setText("");
-            pulseField.setText("");
-            dateTimeField.setText("");
-        }
-    }
-
     /**
      * Validates the user input in the text fields.
      *
