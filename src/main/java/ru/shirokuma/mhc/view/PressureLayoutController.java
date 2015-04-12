@@ -3,6 +3,7 @@ package ru.shirokuma.mhc.view;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -91,17 +92,28 @@ public class PressureLayoutController {
         Pressure selectedPressure = pressureTable.getSelectionModel().getSelectedItem();
         if (selectedPressure != null) {
             boolean okClicked = showPressureEditDialog(selectedPressure);
-            if (okClicked) {
-                showPressureEditDialog(selectedPressure);
-            }
-
         } else {
             // Nothing selected.
-//            Dialogs.create()
-//                    .title("No Selection")
-//                    .masthead("No Person Selected")
-//                    .message("Please select a person in the table.")
-//                    .showWarning();
+            Alert dialog = new Alert(Alert.AlertType.WARNING);
+            dialog.setTitle("No Selection");
+            dialog.setHeaderText("No Pressure Selected");
+            dialog.setContentText("Please select a pressure in the table.");
+            dialog.showAndWait();
+        }
+    }
+
+    @FXML
+    private void handleDeletePressure() {
+        int selectedPressure = pressureTable.getSelectionModel().getSelectedIndex();
+        if (selectedPressure != -1) {
+            mainApp.getPressureData().remove(selectedPressure);
+        } else {
+            // Nothing selected.
+            Alert dialog = new Alert(Alert.AlertType.WARNING);
+            dialog.setTitle("No Selection");
+            dialog.setHeaderText("No Pressure Selected");
+            dialog.setContentText("Please select a pressure in the table.");
+            dialog.showAndWait();
         }
     }
 

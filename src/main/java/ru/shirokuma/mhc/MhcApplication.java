@@ -102,11 +102,13 @@ public class MhcApplication extends Application {
 
     /**
      * Returns the main stage.
+     *
      * @return
      */
     public Stage getPrimaryStage() {
         return primaryStage;
     }
+
     public MhcApplication() {
         // Add some sample data
         pressureData.add(new Pressure(110, 65, 72));
@@ -117,8 +119,10 @@ public class MhcApplication extends Application {
         pressureData.add(new Pressure(90, 75, 60));
         pressureData.add(new Pressure(110, 65, 72));
     }
+
     /**
      * Returns the data as an observable list of Persons.
+     *
      * @return
      */
     public ObservableList<Pressure> getPressureData() {
@@ -162,6 +166,7 @@ public class MhcApplication extends Application {
             primaryStage.setTitle("AddressApp");
         }
     }
+
     /**
      * Loads person data from the specified file. The current person data will
      * be replaced.

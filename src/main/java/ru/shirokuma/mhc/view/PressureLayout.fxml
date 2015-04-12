@@ -27,9 +27,9 @@
                         </TableView>
                         <HBox alignment="BOTTOM_CENTER">
                            <children>
-                              <Button mnemonicParsing="false" text="Add" />
-                              <Button mnemonicParsing="false" text="Edit" />
-                              <Button mnemonicParsing="false" text="Delete" />
+                              <Button mnemonicParsing="false" onAction="#handleNewPressure" text="Add" />
+                              <Button mnemonicParsing="false" onAction="#handleEditPressure" text="Edit" />
+                              <Button mnemonicParsing="false" onAction="#handleDeletePressure" text="Delete" />
                            </children>
                         </HBox>
                      </children>
