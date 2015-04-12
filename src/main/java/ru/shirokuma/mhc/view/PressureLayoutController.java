@@ -1,8 +1,13 @@
 package ru.shirokuma.mhc.view;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -14,8 +19,10 @@ import ru.shirokuma.mhc.MhcApplication;
 import ru.shirokuma.mhc.model.Pressure;
 
 import java.io.IOException;
+import java.text.DateFormatSymbols;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 
 /**
@@ -32,6 +39,14 @@ public class PressureLayoutController {
     private TableColumn<Pressure, Number> bottom;
     @FXML
     private TableColumn<Pressure, Number> pulse;
+
+    @FXML
+    private LineChart<String, Integer> lineChart;
+
+    @FXML
+    private CategoryAxis xAxis;
+
+    private ObservableList<String> monthNames = FXCollections.observableArrayList();
 
     private MhcApplication mainApp;
     /**
@@ -152,5 +167,43 @@ public class PressureLayoutController {
 
         // Add observable list data to the table
         pressureTable.setItems(mainApp.getPressureData());
+
+        /*
+        * Hints about how to make dynamic line chart
+        * https://gist.github.com/jewelsea/2129306
+        * http://stackoverflow.com/questions/9757848/how-to-dynamically-change-line-style-in-javafx-2-0-line-chart
+        * */
+//        ObservableList
+//        lineChart.setData();
+
+        DateTimeFormatter datePointFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+
+        XYChart.Series<String, Integer> seriesUpper = new XYChart.Series<>();
+        seriesUpper.setName("Upper");
+        for (Pressure p : mainApp.getPressureData()){
+            seriesUpper.getData().add(new XYChart.Data<>(datePointFormatter.format(p.getTimePoint()), p.getSbp()));
+        }
+
+        XYChart.Series<String, Integer> seriesBottom = new XYChart.Series<>();
+        seriesBottom.setName("Bottom");
+        for (Pressure p : mainApp.getPressureData()){
+            seriesBottom.getData().add(new XYChart.Data<>(datePointFormatter.format(p.getTimePoint()), p.getDbp()));
+        }
+        XYChart.Series<String, Integer> seriesPulse = new XYChart.Series<>();
+        seriesPulse.setName("Pulse");
+        for (Pressure p : mainApp.getPressureData()){
+            seriesPulse.getData().add(new XYChart.Data<>(datePointFormatter.format(p.getTimePoint()), p.getPulse()));
+        }
+
+        // Assign the month names as categories for the horizontal axis.
+        Set<String> tp = new HashSet<>();
+        for (Pressure p : mainApp.getPressureData()){
+            tp.add(datePointFormatter.format(p.getTimePoint()));
+        }
+        monthNames.addAll(tp);
+        xAxis.setCategories(monthNames);
+
+        lineChart.getData().addAll(seriesUpper, seriesBottom, seriesPulse);
+
     }
 }
