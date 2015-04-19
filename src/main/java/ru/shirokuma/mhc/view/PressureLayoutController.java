@@ -19,7 +19,6 @@ import ru.shirokuma.mhc.MhcApplication;
 import ru.shirokuma.mhc.model.Pressure;
 
 import java.io.IOException;
-import java.text.DateFormatSymbols;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -43,12 +42,16 @@ public class PressureLayoutController {
     @FXML
     private LineChart<String, Integer> lineChart;
 
+    private ChartData chartData;
+
     @FXML
     private CategoryAxis xAxis;
 
-    private ObservableList<String> monthNames = FXCollections.observableArrayList();
 
     private MhcApplication mainApp;
+
+    private final DateTimeFormatter DATE_POINT_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+
     /**
      * Called when the user clicks the new button. Opens a dialog to edit
      * details for a new pressure.
@@ -59,8 +62,10 @@ public class PressureLayoutController {
         boolean okClicked = showPressureEditDialog(tempPressure);
         if (okClicked) {
             mainApp.getPressureData().add(tempPressure);
+            chartData.add(tempPressure);
         }
     }
+
     /**
      * Opens a dialog to edit details for the specified person. If the user
      * clicks OK, the changes are saved into the provided person object and true
@@ -98,6 +103,7 @@ public class PressureLayoutController {
             return false;
         }
     }
+
     /**
      * Called when the user clicks the edit button. Opens a dialog to edit
      * details for the selected person.
@@ -143,9 +149,9 @@ public class PressureLayoutController {
                 @Override
                 protected void updateItem(LocalDateTime item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (item==null || empty){
+                    if (item == null || empty) {
                         setText(null);
-                    }else{
+                    } else {
                         // Format date
                         setText(datePointFormatter.format(item));
                     }
@@ -168,42 +174,63 @@ public class PressureLayoutController {
         // Add observable list data to the table
         pressureTable.setItems(mainApp.getPressureData());
 
+        chartData = new ChartData(mainApp.getPressureData());
+
         /*
         * Hints about how to make dynamic line chart
-        * https://gist.github.com/jewelsea/2129306
-        * http://stackoverflow.com/questions/9757848/how-to-dynamically-change-line-style-in-javafx-2-0-line-chart
+        * http://java-buddy.blogspot.ru/2013/03/javafx-interaction-between-table-and.html
+        * http://java-buddy.blogspot.ru/2013/03/javafx-2-update-stackedbarchart.html
         * */
 //        ObservableList
 //        lineChart.setData();
 
-        DateTimeFormatter datePointFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-
-        XYChart.Series<String, Integer> seriesUpper = new XYChart.Series<>();
-        seriesUpper.setName("Upper");
-        for (Pressure p : mainApp.getPressureData()){
-            seriesUpper.getData().add(new XYChart.Data<>(datePointFormatter.format(p.getTimePoint()), p.getSbp()));
-        }
-
-        XYChart.Series<String, Integer> seriesBottom = new XYChart.Series<>();
-        seriesBottom.setName("Bottom");
-        for (Pressure p : mainApp.getPressureData()){
-            seriesBottom.getData().add(new XYChart.Data<>(datePointFormatter.format(p.getTimePoint()), p.getDbp()));
-        }
-        XYChart.Series<String, Integer> seriesPulse = new XYChart.Series<>();
-        seriesPulse.setName("Pulse");
-        for (Pressure p : mainApp.getPressureData()){
-            seriesPulse.getData().add(new XYChart.Data<>(datePointFormatter.format(p.getTimePoint()), p.getPulse()));
-        }
 
         // Assign the month names as categories for the horizontal axis.
-        Set<String> tp = new HashSet<>();
-        for (Pressure p : mainApp.getPressureData()){
-            tp.add(datePointFormatter.format(p.getTimePoint()));
-        }
-        monthNames.addAll(tp);
-        xAxis.setCategories(monthNames);
 
-        lineChart.getData().addAll(seriesUpper, seriesBottom, seriesPulse);
 
     }
+
+    class ChartData {
+        XYChart.Series<String, Integer> seriesUpper = new XYChart.Series<>();
+        XYChart.Series<String, Integer> seriesBottom = new XYChart.Series<>();
+        XYChart.Series<String, Integer> seriesPulse = new XYChart.Series<>();
+        Set<String> tp = new HashSet<>();
+
+        ObservableList<String> monthNames = FXCollections.observableArrayList();
+
+        public ChartData(ObservableList<Pressure> pressureData) {
+            seriesUpper.setName("Upper");
+            for (Pressure p : pressureData) {
+                seriesUpper.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(p.getTimePoint()), p.getSbp()));
+            }
+
+            seriesBottom.setName("Bottom");
+            for (Pressure p : pressureData) {
+                seriesBottom.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(p.getTimePoint()), p.getDbp()));
+            }
+
+            seriesPulse.setName("Pulse");
+            for (Pressure p : pressureData) {
+                seriesPulse.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(p.getTimePoint()), p.getPulse()));
+            }
+
+            lineChart.getData().addAll(seriesUpper, seriesBottom, seriesPulse);
+
+
+
+            for (Pressure p : pressureData) {
+                tp.add(DATE_POINT_FORMATTER.format(p.getTimePoint()));
+            }
+            monthNames.addAll(tp);
+            xAxis.setCategories(monthNames);
+        }
+
+        public void add(Pressure tempPressure) {
+            seriesUpper.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(tempPressure.getTimePoint()), tempPressure.getSbp()));
+            seriesBottom.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(tempPressure.getTimePoint()), tempPressure.getDbp()));
+            seriesPulse.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(tempPressure.getTimePoint()), tempPressure.getPulse()));
+            tp.add(DATE_POINT_FORMATTER.format(tempPressure.getTimePoint()));
+        }
+    }
+
 }
