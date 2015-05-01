@@ -78,7 +78,7 @@ public class PressureLayoutController {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MhcApplication.class.getResource("view/PressureEditDialog.fxml"));
+            loader.setLocation(MhcApplication.class.getResource("/view/PressureEditDialog.fxml"));
             AnchorPane page = (AnchorPane) loader.load();
 
             // Create the dialog Stage.
