@@ -57,7 +57,7 @@ public class MhcApplication extends Application {
         try {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MhcApplication.class.getResource("view/RootLayout.fxml"));
+            loader.setLocation(MhcApplication.class.getResource("/view/RootLayout.fxml"));
             rootLayout = loader.load();
 
             // Show the scene containing the root layout.
@@ -87,7 +87,7 @@ public class MhcApplication extends Application {
         try {
             // Load pressure overview.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MhcApplication.class.getResource("view/PressureLayout.fxml"));
+            loader.setLocation(MhcApplication.class.getResource("/view/PressureLayout.fxml"));
             AnchorPane pressureOverview = (AnchorPane) loader.load();
 
             // Set pressure overview into the center of root layout.
@@ -279,7 +279,7 @@ public class MhcApplication extends Application {
         try {
             // Load the fxml file and create a new stage for the popup.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MhcApplication.class.getResource("view/BirthdayStatistics.fxml"));
+            loader.setLocation(MhcApplication.class.getResource("/view/BirthdayStatistics.fxml"));
             AnchorPane page = (AnchorPane) loader.load();
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Birthday Statistics");
