@@ -34,6 +34,10 @@ local.properties
 # Eclipse Core
 .project
 
+# Intellij Idea
+*.iml
+classes/
+
 # External tool builders
 .externalToolBuilders/
 
@@ -55,4 +59,5 @@ local.properties
 # TeXlipse plugin
 .texlipse
 
-
+# Maven
+target/
