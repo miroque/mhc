@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -79,7 +80,7 @@ public class PressureLayoutController {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MhcApplication.class.getResource("/view/PressureEditDialog.fxml"));
-            AnchorPane page = (AnchorPane) loader.load();
+            AnchorPane page = loader.load();
 
             // Create the dialog Stage.
             Stage dialogStage = new Stage();
@@ -191,12 +192,11 @@ public class PressureLayoutController {
     }
 
     class ChartData {
-        XYChart.Series<String, Integer> seriesUpper = new XYChart.Series<>();
-        XYChart.Series<String, Integer> seriesBottom = new XYChart.Series<>();
-        XYChart.Series<String, Integer> seriesPulse = new XYChart.Series<>();
-        Set<String> tp = new HashSet<>();
+        private final XYChart.Series<String, Integer> seriesUpper = new XYChart.Series<>();
+        private final XYChart.Series<String, Integer> seriesBottom = new XYChart.Series<>();
+        private final XYChart.Series<String, Integer> seriesPulse = new XYChart.Series<>();
 
-        ObservableList<String> monthNames = FXCollections.observableArrayList();
+        private final ObservableList<String> monthNames;
 
         public ChartData(ObservableList<Pressure> pressureData) {
             seriesUpper.setName("Upper");
@@ -216,21 +216,29 @@ public class PressureLayoutController {
 
             lineChart.getData().addAll(seriesUpper, seriesBottom, seriesPulse);
 
-
-
-            for (Pressure p : pressureData) {
-                tp.add(DATE_POINT_FORMATTER.format(p.getTimePoint()));
-            }
-            monthNames.addAll(tp);
+            final List<String> timePoints = pressureData
+                    .stream()
+                    .map(p -> DATE_POINT_FORMATTER.format(p.getTimePoint()))
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
+            monthNames = FXCollections.observableArrayList(timePoints);
             xAxis.setCategories(monthNames);
         }
 
         public void add(Pressure tempPressure) {
-            seriesUpper.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(tempPressure.getTimePoint()), tempPressure.getSbp()));
-            seriesBottom.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(tempPressure.getTimePoint()), tempPressure.getDbp()));
-            seriesPulse.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(tempPressure.getTimePoint()), tempPressure.getPulse()));
-            tp.add(DATE_POINT_FORMATTER.format(tempPressure.getTimePoint()));
+            final String timePoint = DATE_POINT_FORMATTER.format(tempPressure.getTimePoint());
+
+            seriesUpper.getData().add(new XYChart.Data<>(timePoint, tempPressure.getSbp()));
+            seriesBottom.getData().add(new XYChart.Data<>(timePoint, tempPressure.getDbp()));
+            seriesPulse.getData().add(new XYChart.Data<>(timePoint, tempPressure.getPulse()));
+
+            if (!monthNames.contains(timePoint)) {
+                // TODO check performance on huge chart.
+                // TODO probably binding should be rewritten to collection creation and switching
+                monthNames.add(timePoint);
+                Collections.sort(monthNames);
+            }
         }
     }
-
 }
