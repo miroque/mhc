@@ -5,6 +5,7 @@ import ru.shirokuma.mhc.util.LocalDateTimeAdapter;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Created by panov on 11.03.2015.
@@ -14,6 +15,7 @@ public class Pressure {
     private final IntegerProperty dbp;
     private final IntegerProperty pulse;
     private final ObjectProperty<LocalDateTime> timePoint;
+    private Integer hashCode;
 
     /**
      * Default constructor.
@@ -35,7 +37,31 @@ public class Pressure {
         this.pulse = new SimpleIntegerProperty(pulse);
 
         // Some initial dummy data, just for convenient testing.
-        this.timePoint = new SimpleObjectProperty<LocalDateTime>(LocalDateTime.now());
+        this.timePoint = new SimpleObjectProperty<>(LocalDateTime.now());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Pressure)) {
+            return false;
+        }
+        final Pressure p = (Pressure) obj;
+        if (sbp.get() == p.sbp.get() && dbp.get() == p.dbp.get() && pulse.get() == p.pulse.get() &&
+                Objects.equals(timePoint.get(), p.timePoint.get())) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if (hashCode == null) {
+            hashCode = Objects.hash(sbp.get(), dbp.get(), pulse.get(), timePoint.get());
+        }
+        return hashCode;
     }
 
     public int getSbp() {

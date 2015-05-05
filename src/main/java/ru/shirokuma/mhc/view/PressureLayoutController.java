@@ -111,9 +111,12 @@ public class PressureLayoutController {
      */
     @FXML
     private void handleEditPressure() {
-        Pressure selectedPressure = pressureTable.getSelectionModel().getSelectedItem();
-        if (selectedPressure != null) {
-            boolean okClicked = showPressureEditDialog(selectedPressure);
+        Pressure pressure = pressureTable.getSelectionModel().getSelectedItem();
+        if (pressure != null) {
+            boolean okClicked = showPressureEditDialog(pressure);
+            if (okClicked) {
+                chartData.edit(pressure);
+            }
         } else {
             // Nothing selected.
             Alert dialog = new Alert(Alert.AlertType.WARNING);
@@ -198,20 +201,18 @@ public class PressureLayoutController {
 
         private final ObservableList<String> monthNames;
 
+        private final Map<Pressure, XYChart.Data<String, Integer>> uppers = new HashMap<>();
+        private final Map<Pressure, XYChart.Data<String, Integer>> bottoms = new HashMap<>();
+        private final Map<Pressure, XYChart.Data<String, Integer>> pulses = new HashMap<>();
+
         public ChartData(ObservableList<Pressure> pressureData) {
             seriesUpper.setName("Upper");
-            for (Pressure p : pressureData) {
-                seriesUpper.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(p.getTimePoint()), p.getSbp()));
-            }
-
             seriesBottom.setName("Bottom");
-            for (Pressure p : pressureData) {
-                seriesBottom.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(p.getTimePoint()), p.getDbp()));
-            }
-
             seriesPulse.setName("Pulse");
+
             for (Pressure p : pressureData) {
-                seriesPulse.getData().add(new XYChart.Data<>(DATE_POINT_FORMATTER.format(p.getTimePoint()), p.getPulse()));
+                String timePoint = DATE_POINT_FORMATTER.format(p.getTimePoint());
+                addPresureToChart(p, timePoint);
             }
 
             lineChart.getData().addAll(seriesUpper, seriesBottom, seriesPulse);
@@ -228,10 +229,7 @@ public class PressureLayoutController {
 
         public void add(Pressure tempPressure) {
             final String timePoint = DATE_POINT_FORMATTER.format(tempPressure.getTimePoint());
-
-            seriesUpper.getData().add(new XYChart.Data<>(timePoint, tempPressure.getSbp()));
-            seriesBottom.getData().add(new XYChart.Data<>(timePoint, tempPressure.getDbp()));
-            seriesPulse.getData().add(new XYChart.Data<>(timePoint, tempPressure.getPulse()));
+            addPresureToChart(tempPressure, timePoint);
 
             if (!monthNames.contains(timePoint)) {
                 // TODO check performance on huge chart.
@@ -239,6 +237,31 @@ public class PressureLayoutController {
                 monthNames.add(timePoint);
                 Collections.sort(monthNames);
             }
+        }
+
+        private void addPresureToChart(Pressure p, String timePoint) {
+            XYChart.Data<String, Integer> upper = new XYChart.Data<>(timePoint, p.getSbp());
+            seriesUpper.getData().add(upper);
+            uppers.put(p, upper);
+            XYChart.Data<String, Integer> bottom = new XYChart.Data<>(timePoint, p.getDbp());
+            seriesBottom.getData().add(bottom);
+            bottoms.put(p, bottom);
+            XYChart.Data<String, Integer> pulse = new XYChart.Data<>(timePoint, p.getPulse());
+            seriesPulse.getData().add(pulse);
+            pulses.put(p, pulse);
+        }
+
+        private void remove(Pressure pressure) {
+            seriesUpper.getData().remove(uppers.get(pressure));
+            seriesBottom.getData().remove(bottoms.get(pressure));
+            seriesPulse.getData().remove(pulses.get(pressure));
+
+            // TODO there might left empty an time point.
+        }
+
+        public void edit(Pressure pressure) {
+            remove(pressure);
+            add(pressure);
         }
     }
 }
